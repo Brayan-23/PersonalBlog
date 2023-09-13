@@ -14,7 +14,7 @@ public class Theme {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull(message = "The Attribute is Mandatory")
+  @NotNull(message = "The Description attribute is Mandatory")
   private String description;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "theme", cascade = CascadeType.REMOVE)
