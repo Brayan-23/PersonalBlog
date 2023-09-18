@@ -1,8 +1,8 @@
 package com.generation.blogpessoal.controller;
 
-import com.generation.blogpessoal.model.Usuario;
-import com.generation.blogpessoal.repository.UsuarioRepository;
-import com.generation.blogpessoal.service.UsuarioService;
+import com.generation.blogpessoal.model.User;
+import com.generation.blogpessoal.repository.UserRepository;
+import com.generation.blogpessoal.service.UserService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,21 +19,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UsuarioControllerTest {
+public class UserControllerTest {
 
   @Autowired
   private TestRestTemplate testRestTemplate;
   @Autowired
-  private UsuarioService usuarioService;
+  private UserService userService;
   @Autowired
-  private UsuarioRepository usuarioRepository;
+  private UserRepository userRepository;
 
   @BeforeEach
   void start() {
-    usuarioRepository.deleteAll();
-    usuarioService.cadastrarUsuario(new Usuario(
+    userRepository.deleteAll();
+    userService.registerUser(new User(
         0L,
-        "Brayan Santos",
+        "Bryan Santos",
         "brayan@email.com",
         "12345678",
         "bbbbbbbbbbbbb",
@@ -44,14 +44,14 @@ public class UsuarioControllerTest {
   @DisplayName("Post new User")
   void postUser(){
 
-    HttpEntity<Usuario> bodyRequest = new HttpEntity<>(new Usuario(1L,
+    HttpEntity<User> bodyRequest = new HttpEntity<>(new User(1L,
         "Teste",
         "teste@email.com",
         "123456789",
         "ttttttttttttttttttt",
         null));
 
-    ResponseEntity<Usuario> bodyResponse = testRestTemplate.exchange("/usuarios/cadastrar", HttpMethod.POST, bodyRequest, Usuario.class);
+    ResponseEntity<User> bodyResponse = testRestTemplate.exchange("/user/register", HttpMethod.POST, bodyRequest, User.class);
 
     assertEquals(HttpStatus.CREATED, bodyResponse.getStatusCode());
   }
@@ -60,21 +60,21 @@ public class UsuarioControllerTest {
   @DisplayName("Not Duplicate User")
   void duplicateUser(){
 
-    usuarioService.cadastrarUsuario(new Usuario(1L,
+    userService.registerUser(new User(1L,
         "Rogerio Algo",
         "rogerio@email.com",
         "87654321",
         "rrrrrrrrrrrrrrrrr",
         null));
 
-    HttpEntity<Usuario> bodyRequest = new HttpEntity<>(new Usuario(1L,
+    HttpEntity<User> bodyRequest = new HttpEntity<>(new User(1L,
         "Rogerio Algo",
         "rogerio@email.com",
         "87654321",
         "rrrrrrrrrrrrrrrrr",
         null));
 
-    ResponseEntity<Usuario> bodyResponse = testRestTemplate.exchange("/usuarios/cadastrar", HttpMethod.POST, bodyRequest, Usuario.class);
+    ResponseEntity<User> bodyResponse = testRestTemplate.exchange("/user/register", HttpMethod.POST, bodyRequest, User.class);
 
     assertEquals(HttpStatus.BAD_REQUEST, bodyResponse.getStatusCode());
   }
@@ -83,26 +83,26 @@ public class UsuarioControllerTest {
   @Test
   @DisplayName("Update User with Success")
   void updateUser(){
-    Optional<Usuario> userRegistered = usuarioService.cadastrarUsuario(new Usuario(
+    Optional<User> userRegistered = userService.registerUser(new User(
         0L,
         "Update",
         "update@email.com",
         "987654321",
         "uuuuuuuuuuuuuuuuuuuuuuuuu",
         null));
-    Usuario userUpdate =
-        new Usuario(
+    User userUpdate =
+        new User(
             userRegistered.get().getId(),
             "Juliana Andrews Ramos",
             "juliana@email.com",
             "juliana123",
             "jjjjjj",
             null);
-    HttpEntity<Usuario> bodyRequest = new HttpEntity<>(userUpdate);
+    HttpEntity<User> bodyRequest = new HttpEntity<>(userUpdate);
 
-    ResponseEntity<Usuario> bodyResponse = testRestTemplate
+    ResponseEntity<User> bodyResponse = testRestTemplate
         .withBasicAuth("brayan@email.com", "12345678")
-        .exchange("/usuarios/atualizar", HttpMethod.PUT, bodyRequest, Usuario.class);
+        .exchange("/user/update", HttpMethod.PUT, bodyRequest, User.class);
 
     assertEquals(HttpStatus.OK, bodyResponse.getStatusCode());
   }
@@ -110,21 +110,20 @@ public class UsuarioControllerTest {
   @Test
   @DisplayName("return all users that are in the database")
   void getAll() {
-    usuarioService.cadastrarUsuario(new Usuario(
-            1L,
-            "Juliana Andrews Ramos",
-            "juliana@email.com",
-            "juliana123",
-            "jjjjjj",
-            null));
+    userService.registerUser(new User(
+        1L,
+        "Juliana Andrews Ramos",
+        "juliana@email.com",
+        "juliana123",
+        "jjjjjj",
+        null));
 
     ResponseEntity<String> bodyResponse = testRestTemplate
         .withBasicAuth("brayan@email.com", "12345678")
-        .exchange("/usuarios/all", HttpMethod.GET, null, String.class);
+        .exchange("/user/all", HttpMethod.GET, null, String.class);
 
     assertEquals(HttpStatus.OK, bodyResponse.getStatusCode());
   }
-
 
 
 
