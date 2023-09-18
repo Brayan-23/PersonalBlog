@@ -16,12 +16,12 @@ public class Posts {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @NotBlank(message = "The Title attribute is Madatory!")
+  @NotBlank(message = "The Title attribute is Mandatory!")
   @Size(min = 5, max = 100, message = "\n" +
       "the attribute title must have minimum 05 and maximum 100 characters\n")
   private String title;
 
-  @NotBlank(message = "The Text attribute is Madatory!")
+  @NotBlank(message = "The Text attribute is Mandatory!")
   @Size(min = 10, max = 1000, message = "\n" +
       "the attribute title must have minimum 10 and maximum 1000 characters\n")
   private String text;
@@ -35,18 +35,18 @@ public class Posts {
 
   @ManyToOne
   @JsonIgnoreProperties("posts")
-  private Usuario usuario;
+  private User user;
 
   public long getId() {
     return id;
   }
 
-  public Usuario getUser() {
-    return usuario;
+  public User getUser() {
+    return user;
   }
 
-  public void setUser(Usuario user) {
-    this.usuario = user;
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public Theme getTheme() {
